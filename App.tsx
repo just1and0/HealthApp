@@ -61,6 +61,22 @@ function App(): React.JSX.Element {
   const handleGetHealthKitData = () => {
     setShowPermissionModal(false)
     setIsLoading(false)
+    NativeModules.HealthInfo.getHeartRate((value:{}) =>{
+      console.log("HeartRate",value)
+    })
+
+    NativeModules.HealthInfo.getBodyTemperature((value:{}) =>{
+      console.log("getBodyTemperature",value)
+    })
+
+    NativeModules.HealthInfo.getOxygenSaturation((value:{}) =>{
+      console.log("getOxygenSaturation",value)
+    })
+
+    NativeModules.HealthInfo.getBloodPressureSystolic((value:{}) =>{
+      console.log("getBloodPressureSystolic",value)
+    })
+    
   }
 
   const handleRefresh =()=>{

@@ -83,6 +83,75 @@ class HealthInfo: NSObject {
             }
         }
     }
+  
+  @objc
+  func getHealthData(_ sampleType: HKSampleType, unit: String, callback: @escaping RCTResponseSenderBlock) {
+      let startDate = Calendar.current.date(byAdding: .month, value: -1, to: Date())
+      let predicate = HKQuery.predicateForSamples(withStart: startDate, end: Date(), options: .strictEndDate)
+      let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
+
+      let query = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: Int(HKObjectQueryNoLimit), sortDescriptors: [sortDescriptor]) { (sample, result, error) in
+          guard error == nil else {
+              return
+          }
+
+          var healthData: [String: Any] = ["status": false]
+
+          if let result = result, result.count > 0 {
+              let data = result[0] as! HKQuantitySample
+              let value = data.quantity.doubleValue(for: HKUnit(from: unit))
+              print("Latest Value \(value)")
+
+              let dateFormatter = DateFormatter()
+              dateFormatter.dateFormat = "dd/MM/yyyy HH:mm:ss"
+              let startDate = dateFormatter.string(from: data.startDate)
+              let endDate = dateFormatter.string(from: data.endDate)
+
+              healthData = [
+                  "status": true,
+                  "latestValue": value,
+                  "unit": unit,
+                  "recordDuration": "StartDate: \(startDate) : EndDate: \(endDate)"
+              ]
+          }
+
+          callback([healthData])
+      }
+
+      healthStore.execute(query)
+  }
+
+  @objc
+  func getHeartRate(_ callback: @escaping RCTResponseSenderBlock) {
+      guard let Type = HKObjectType.quantityType(forIdentifier: .heartRate) else {
+          return
+      }
+      getHealthData(Type, unit: "count/min", callback: callback)
+  }
+  
+  @objc
+  func getBodyTemperature(_ callback: @escaping RCTResponseSenderBlock) {
+      guard let Type = HKObjectType.quantityType(forIdentifier: .bodyTemperature) else {
+          return
+      }
+      getHealthData(Type, unit: "degC", callback: callback)
+  }
+  
+  @objc
+  func getOxygenSaturation(_ callback: @escaping RCTResponseSenderBlock) {
+      guard let Type = HKObjectType.quantityType(forIdentifier: .oxygenSaturation) else {
+          return
+      }
+      getHealthData(Type, unit: "%", callback: callback)
+  }
+  
+  @objc
+  func getBloodPressureSystolic(_ callback: @escaping RCTResponseSenderBlock) {
+      guard let Type = HKObjectType.quantityType(forIdentifier: .bloodPressureSystolic) else {
+          return
+      }
+      getHealthData(Type, unit: "mmHg", callback: callback)
+  }
     
     @objc
     static func requiresMainQueueSetup() -> Bool {

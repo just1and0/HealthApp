@@ -11,4 +11,8 @@
 @interface RCT_EXTERN_MODULE(HealthInfo, NSObject)
 
 RCT_EXTERN_METHOD(authorizeHealthKit:(RCTResponseSenderBlock)callback)
+RCT_EXTERN_METHOD(getHeartRate:(RCTResponseSenderBlock)callback)
+RCT_EXTERN_METHOD(getBodyTemperature:(RCTResponseSenderBlock)callback)
+RCT_EXTERN_METHOD(getOxygenSaturation:(RCTResponseSenderBlock)callback)
+RCT_EXTERN_METHOD(getBloodPressureSystolic:(RCTResponseSenderBlock)callback)
 @end
