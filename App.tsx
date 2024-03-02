@@ -18,13 +18,17 @@ import {
   ActivityIndicator,
   Linking,
   Platform,
-  ToastAndroid
+  ToastAndroid,
+  FlatList,
+  RefreshControl
 } from 'react-native';
 
 
 function App(): React.JSX.Element {
   const [showPermissionModal, setShowPermissionModal] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [healthData, setHealthData] = useState([]);
 
   console.log(NativeModules.HealthInfo)
 
@@ -38,10 +42,6 @@ function App(): React.JSX.Element {
     })
   }
 
-  const handleGetHealthKitData = () => {
-    setShowPermissionModal(false)
-  }
-
   const handleAskForPermission = () => {
     NativeModules.HealthInfo.authorizeHealthKit((value: boolean) => {
       if (value == true) {
@@ -49,13 +49,24 @@ function App(): React.JSX.Element {
       } else {
         // permission has been denied on initial app load, user will need to update in settings.
         // Navigate to settings to update manually.
-        if(Platform.OS){
+        if (Platform.OS) {
           Linking.openURL('app-settings:')
-        }else{
+        } else {
           ToastAndroid.show('Update permissions in settings', ToastAndroid.LONG)
         }
       }
     })
+  }
+
+  const handleGetHealthKitData = () => {
+    setShowPermissionModal(false)
+    setIsLoading(false)
+  }
+
+  const handleRefresh =()=>{
+    setRefreshing(true); 
+    handleGetHealthKitData()
+    setRefreshing(false)
   }
 
   useEffect(() => {
@@ -66,7 +77,24 @@ function App(): React.JSX.Element {
     <View style={styles.containter}>
       <SafeAreaView>
         <LoaderComponent isLoading={isLoading} />
-        <Text>Health Tracker App</Text>
+        <Text style={{ alignSelf: 'center' }}>Health Tracker App</Text>
+        <FlatList
+          data={healthData}
+          keyExtractor={(item: { label: string, value: number }) => item.label}
+          ListEmptyComponent={<EmptyStateMessage />}
+          renderItem={({ item }) => (
+            <View style={styles.dataItem}>
+              <Text>{item.label}</Text>
+              <Text>{item.value}</Text>
+            </View>
+          )}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+            />
+          }
+        />
         <AppModal
           showPermissionModal={showPermissionModal}
           onButtonPressed={() => handleAskForPermission()}
@@ -113,11 +141,15 @@ const AppModal = ({ showPermissionModal, onButtonPressed }: { showPermissionModa
   )
 }
 
+const EmptyStateMessage = () => {
+  return (
+    <Text style={styles.emptyStateMessage}>No health data available</Text>
+  );
+}
+
 const styles = StyleSheet.create({
   containter: {
     flex: 1,
-    alignContent: 'center',
-    alignItems: 'center'
   },
   modalContainer: {
     flex: 1,
@@ -149,8 +181,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#DDDDDD',
     padding: 10
-  }
-
+  },
+  dataItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    flex: 1
+  },
+  emptyStateMessage: {
+    textAlign: 'center',
+    fontSize: 18,
+    marginTop: 20,
+  },
 });
 
 export default App;
