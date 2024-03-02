@@ -5,27 +5,152 @@
  * @format
  */
 
+import { useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
   View,
+  NativeModules,
+  Modal,
+  SafeAreaView,
+  Button,
+  TouchableOpacity,
+  ActivityIndicator,
+  Linking,
+  Platform,
+  ToastAndroid
 } from 'react-native';
 
 
 function App(): React.JSX.Element {
+  const [showPermissionModal, setShowPermissionModal] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+
+  console.log(NativeModules.HealthInfo)
+
+  const loadPermissions = () => {
+    NativeModules.HealthInfo.authorizeHealthKit((value: boolean) => {
+      if (value == true) {
+        handleGetHealthKitData()
+      } else {
+        setShowPermissionModal(true)
+      }
+    })
+  }
+
+  const handleGetHealthKitData = () => {
+    setShowPermissionModal(false)
+  }
+
+  const handleAskForPermission = () => {
+    NativeModules.HealthInfo.authorizeHealthKit((value: boolean) => {
+      if (value == true) {
+        handleGetHealthKitData()
+      } else {
+        // permission has been denied on initial app load, user will need to update in settings.
+        // Navigate to settings to update manually.
+        if(Platform.OS){
+          Linking.openURL('app-settings:')
+        }else{
+          ToastAndroid.show('Update permissions in settings', ToastAndroid.LONG)
+        }
+      }
+    })
+  }
+
+  useEffect(() => {
+    loadPermissions()
+  }, [])
+
   return (
     <View style={styles.containter}>
-      <Text>Health Tracker App</Text>
+      <SafeAreaView>
+        <LoaderComponent isLoading={isLoading} />
+        <Text>Health Tracker App</Text>
+        <AppModal
+          showPermissionModal={showPermissionModal}
+          onButtonPressed={() => handleAskForPermission()}
+        />
+      </SafeAreaView>
     </View>
   );
 }
 
+const LoaderComponent = ({ isLoading }: { isLoading: boolean }) => {
+  return (
+    <>
+      {
+        isLoading ?
+          <ActivityIndicator color={'green'} /> : null
+      }
+    </>
+  )
+}
+
+const AppModal = ({ showPermissionModal, onButtonPressed }: { showPermissionModal: boolean, onButtonPressed: () => void }) => {
+  return (
+    <>
+      <Modal
+        visible={showPermissionModal}
+        animationType='slide'
+        statusBarTranslucent
+        transparent
+      >
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalContentContainer}>
+            <Text style={styles.modalContentViewTitle}>Grant Permission</Text>
+            <Text style={styles.modalContentViewSubTitle}>You need to grant permission to HealthApp before you can start enjoying our services. We will never share your data with third party</Text>
+            <TouchableOpacity
+              onPress={() => onButtonPressed()}
+              style={styles.button}
+            >
+              <Text>Request Permission</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      </Modal>
+    </>
+  )
+}
+
 const styles = StyleSheet.create({
-  containter: { 
-    flex: 1, 
-    alignContent: 'center', 
-    justifyContent: 'center', 
-    alignItems: 'center' },
+  containter: {
+    flex: 1,
+    alignContent: 'center',
+    alignItems: 'center'
+  },
+  modalContainer: {
+    flex: 1,
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+    opacity: .9
+  },
+  modalContentContainer: {
+    flex: 1,
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20
+  },
+  modalContentViewTitle: {
+    color: 'white',
+    fontSize: 25,
+    marginBottom: 15
+  },
+  modalContentViewSubTitle: {
+    color: 'white',
+    fontSize: 15,
+    textAlign: "justify",
+    marginBottom: 15
+  },
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 10
+  }
+
 });
 
 export default App;
