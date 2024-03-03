@@ -62,19 +62,19 @@ function App(): React.JSX.Element {
     setShowPermissionModal(false)
     setIsLoading(false)
     NativeModules.HealthInfo.getHeartRate((value:{}) =>{
-      console.log("HeartRate",value)
+      console.log(value)
     })
 
     NativeModules.HealthInfo.getBodyTemperature((value:{}) =>{
-      console.log("getBodyTemperature",value)
+      console.log(value)
     })
 
     NativeModules.HealthInfo.getOxygenSaturation((value:{}) =>{
-      console.log("getOxygenSaturation",value)
+      console.log(value)
     })
 
     NativeModules.HealthInfo.getBloodPressureSystolic((value:{}) =>{
-      console.log("getBloodPressureSystolic",value)
+      console.log(value)
     })
     
   }

@@ -85,7 +85,7 @@ class HealthInfo: NSObject {
     }
   
   @objc
-  func getHealthData(_ sampleType: HKSampleType, unit: String, callback: @escaping RCTResponseSenderBlock) {
+  func getHealthData(_ sampleType: HKSampleType, unit: String, name: String, callback: @escaping RCTResponseSenderBlock) {
       let startDate = Calendar.current.date(byAdding: .month, value: -1, to: Date())
       let predicate = HKQuery.predicateForSamples(withStart: startDate, end: Date(), options: .strictEndDate)
       let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
@@ -108,6 +108,7 @@ class HealthInfo: NSObject {
               let endDate = dateFormatter.string(from: data.endDate)
 
               healthData = [
+                  "name": name,
                   "status": true,
                   "latestValue": value,
                   "unit": unit,
@@ -126,7 +127,7 @@ class HealthInfo: NSObject {
       guard let Type = HKObjectType.quantityType(forIdentifier: .heartRate) else {
           return
       }
-      getHealthData(Type, unit: "count/min", callback: callback)
+     getHealthData(Type, unit: "count/min", name:"Heart Rate", callback: callback)
   }
   
   @objc
@@ -134,7 +135,7 @@ class HealthInfo: NSObject {
       guard let Type = HKObjectType.quantityType(forIdentifier: .bodyTemperature) else {
           return
       }
-      getHealthData(Type, unit: "degC", callback: callback)
+    getHealthData(Type, unit: "degC", name:"Body Temperature", callback: callback)
   }
   
   @objc
@@ -142,7 +143,7 @@ class HealthInfo: NSObject {
       guard let Type = HKObjectType.quantityType(forIdentifier: .oxygenSaturation) else {
           return
       }
-      getHealthData(Type, unit: "%", callback: callback)
+      getHealthData(Type, unit: "%",name:"Oxygen Saturation", callback: callback)
   }
   
   @objc
@@ -150,7 +151,7 @@ class HealthInfo: NSObject {
       guard let Type = HKObjectType.quantityType(forIdentifier: .bloodPressureSystolic) else {
           return
       }
-      getHealthData(Type, unit: "mmHg", callback: callback)
+      getHealthData(Type, unit: "mmHg", name:"Blood Pressure Systolic", callback: callback)
   }
     
     @objc
