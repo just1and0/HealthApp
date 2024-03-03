@@ -1,9 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
 import HeartRate from '../assets/icons/HeartRate';
 import BodyTemperature from '../assets/icons/BodyTemperature';
 import OxygenSaturation from '../assets/icons/OxygenSaturation';
