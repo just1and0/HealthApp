@@ -28,7 +28,7 @@ function App(): React.JSX.Element {
   const [showPermissionModal, setShowPermissionModal] = useState(false)
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [healthData, setHealthData] = useState([]);
+  const [healthData, setHealthData] = useState<any>([]);
 
   console.log(NativeModules.HealthInfo)
 
@@ -59,28 +59,37 @@ function App(): React.JSX.Element {
   }
 
   const handleGetHealthKitData = () => {
+    setHealthData([])
     setShowPermissionModal(false)
     setIsLoading(false)
-    NativeModules.HealthInfo.getHeartRate((value:{}) =>{
-      console.log(value)
+    NativeModules.HealthInfo.getHeartRate((value: { status: boolean }) => {
+      if (value.status == true) {
+        setHealthData((prevHealthData:any) => [...prevHealthData, value]);
+      }
     })
 
-    NativeModules.HealthInfo.getBodyTemperature((value:{}) =>{
-      console.log(value)
+    NativeModules.HealthInfo.getBodyTemperature((value: { status: boolean }) => {
+      if (value.status == true) {
+        setHealthData((prevHealthData:any) => [...prevHealthData, value]);
+      }
     })
 
-    NativeModules.HealthInfo.getOxygenSaturation((value:{}) =>{
-      console.log(value)
+    NativeModules.HealthInfo.getOxygenSaturation((value: { status: boolean }) => {
+      if (value.status == true) {
+        setHealthData((prevHealthData:any) => [...prevHealthData, value]);
+      }
     })
 
-    NativeModules.HealthInfo.getBloodPressureSystolic((value:{}) =>{
-      console.log(value)
+    NativeModules.HealthInfo.getBloodPressureSystolic((value: { status: boolean }) => {
+      if (value.status == true) {
+        setHealthData((prevHealthData:any) => [...prevHealthData, value]);
+      }
     })
-    
+
   }
 
-  const handleRefresh =()=>{
-    setRefreshing(true); 
+  const handleRefresh = () => {
+    setRefreshing(true);
     handleGetHealthKitData()
     setRefreshing(false)
   }
@@ -96,12 +105,12 @@ function App(): React.JSX.Element {
         <Text style={{ alignSelf: 'center' }}>Health Tracker App</Text>
         <FlatList
           data={healthData}
-          keyExtractor={(item: { label: string, value: number }) => item.label}
+          keyExtractor={(item: { name:string, unit: string, latestValue:number, recordDuration:string}) => item.name}
           ListEmptyComponent={<EmptyStateMessage />}
           renderItem={({ item }) => (
             <View style={styles.dataItem}>
-              <Text>{item.label}</Text>
-              <Text>{item.value}</Text>
+              <Text>{item.name} {`\n`} ({item.recordDuration})</Text>
+              <Text>{item.latestValue} {item.unit}</Text>
             </View>
           )}
           refreshControl={

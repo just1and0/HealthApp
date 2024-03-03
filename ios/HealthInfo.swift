@@ -103,7 +103,7 @@ class HealthInfo: NSObject {
               print("Latest Value \(value)")
 
               let dateFormatter = DateFormatter()
-              dateFormatter.dateFormat = "dd/MM/yyyy HH:mm:ss"
+              dateFormatter.dateFormat = "dd/MM/yyyy"
               let startDate = dateFormatter.string(from: data.startDate)
               let endDate = dateFormatter.string(from: data.endDate)
 
@@ -112,7 +112,7 @@ class HealthInfo: NSObject {
                   "status": true,
                   "latestValue": value,
                   "unit": unit,
-                  "recordDuration": "StartDate: \(startDate) : EndDate: \(endDate)"
+                  "recordDuration": "\(startDate) - \(endDate)"
               ]
           }
 
