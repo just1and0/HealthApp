@@ -38,7 +38,7 @@ function App(): React.JSX.Element {
       } else {
         // permission has been denied on initial app load, user will need to update in settings.
         // Navigate to settings to update manually.
-        if (Platform.OS) {
+        if (Platform.OS == 'ios') {
           Linking.openURL('app-settings:')
         } else {
           ToastAndroid.show('Update permissions in settings', ToastAndroid.LONG)
