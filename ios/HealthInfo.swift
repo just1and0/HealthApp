@@ -85,7 +85,7 @@ class HealthInfo: NSObject {
     }
   
   @objc
-  func getHealthData(_ sampleType: HKSampleType, unit: String, name: String, callback: @escaping RCTResponseSenderBlock) {
+  func getHealthData(_ sampleType: HKSampleType, unit: String, name: String, identifier: String, callback: @escaping RCTResponseSenderBlock) {
       let startDate = Calendar.current.date(byAdding: .month, value: -1, to: Date())
       let predicate = HKQuery.predicateForSamples(withStart: startDate, end: Date(), options: .strictEndDate)
       let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
@@ -100,7 +100,6 @@ class HealthInfo: NSObject {
           if let result = result, result.count > 0 {
               let data = result[0] as! HKQuantitySample
               let value = data.quantity.doubleValue(for: HKUnit(from: unit))
-              print("Latest Value \(value)")
 
               let dateFormatter = DateFormatter()
               dateFormatter.dateFormat = "dd/MM/yyyy"
@@ -112,7 +111,8 @@ class HealthInfo: NSObject {
                   "status": true,
                   "latestValue": value,
                   "unit": unit,
-                  "recordDuration": "\(startDate) - \(endDate)"
+                  "recordDuration": "\(startDate) - \(endDate)",
+                  "identifier":identifier
               ]
           }
 
@@ -127,7 +127,7 @@ class HealthInfo: NSObject {
       guard let Type = HKObjectType.quantityType(forIdentifier: .heartRate) else {
           return
       }
-     getHealthData(Type, unit: "count/min", name:"Heart Rate", callback: callback)
+     getHealthData(Type, unit: "count/min", name:"Heart Rate", identifier:"heartRate", callback: callback)
   }
   
   @objc
@@ -135,7 +135,7 @@ class HealthInfo: NSObject {
       guard let Type = HKObjectType.quantityType(forIdentifier: .bodyTemperature) else {
           return
       }
-    getHealthData(Type, unit: "degC", name:"Body Temperature", callback: callback)
+    getHealthData(Type, unit: "degC", name:"Body Temperature", identifier:"bodyTemperature", callback: callback)
   }
   
   @objc
@@ -143,7 +143,7 @@ class HealthInfo: NSObject {
       guard let Type = HKObjectType.quantityType(forIdentifier: .oxygenSaturation) else {
           return
       }
-      getHealthData(Type, unit: "%",name:"Oxygen Saturation", callback: callback)
+      getHealthData(Type, unit: "%",name:"Oxygen Saturation", identifier:"oxygenSaturation", callback: callback)
   }
   
   @objc
@@ -151,7 +151,7 @@ class HealthInfo: NSObject {
       guard let Type = HKObjectType.quantityType(forIdentifier: .bloodPressureSystolic) else {
           return
       }
-      getHealthData(Type, unit: "mmHg", name:"Blood Pressure Systolic", callback: callback)
+    getHealthData(Type, unit: "mmHg", name:"Blood Pressure Systolic", identifier:"bloodPressureSystolic", callback: callback)
   }
     
     @objc

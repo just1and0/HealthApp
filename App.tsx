@@ -20,14 +20,13 @@ import {
 } from 'react-native';
 import AppModal from './components/AppModal'
 import LoaderComponent from './components/Loader'
+import Icons from './components/Icons';
 
 function App(): React.JSX.Element {
   const [showPermissionModal, setShowPermissionModal] = useState(false)
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [healthData, setHealthData] = useState<any>([]);
-
-  console.log(NativeModules.HealthInfo)
 
   const loadPermissions = () => {
     NativeModules.HealthInfo.authorizeHealthKit((value: boolean) => {
@@ -96,26 +95,29 @@ function App(): React.JSX.Element {
   }, [])
 
   return (
-    <View style={styles.containter}>
+    <View style={styles.container}>
       <SafeAreaView>
         <LoaderComponent isLoading={isLoading} />
-        <Text style={{ alignSelf: 'center' }}>Health Tracker App</Text>
+        <View style={styles.header}>
+          <Text style={styles.appTitle}>Health Tracker App</Text>
+        </View>
         <FlatList
           data={healthData}
-          keyExtractor={(item: { name:string, unit: string, latestValue:number, recordDuration:string}) => item.name}
+          keyExtractor={(item) => item.name}
           ListEmptyComponent={<EmptyStateMessage />}
           renderItem={({ item }) => (
             <View style={styles.dataItem}>
-              <Text>{item.name} {`\n`} ({item.recordDuration})</Text>
-              <Text>{item.latestValue} {item.unit}</Text>
+              <Icons identifier={item.identifier} />
+              <View style={styles.dataText}>
+                <Text style={styles.dataItemName}>{item.name}</Text>
+                <Text style={styles.dataItemDuration}>({item.recordDuration})</Text>
+                <Text style={styles.dataItemValue}>
+                  {item.latestValue} {item.unit}
+                </Text>
+              </View>
             </View>
           )}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-            />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         />
         <AppModal
           showPermissionModal={showPermissionModal}
@@ -133,16 +135,40 @@ const EmptyStateMessage = () => {
 }
 
 const styles = StyleSheet.create({
-  containter: {
+  container: {
     flex: 1,
+    backgroundColor: '#f4f4f4',
+  },
+  header: {
+    backgroundColor: '#3498db',
+    padding: 15,
+    alignItems: 'center',
+  },
+  appTitle: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
   dataItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
+    alignItems: 'center',
+    padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
-    flex: 1
+  },
+  dataText: {
+    marginLeft: 15,
+  },
+  dataItemName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  dataItemDuration: {
+    fontSize: 12,
+    color: '#888',
+  },
+  dataItemValue: {
+    fontSize: 14,
   },
   emptyStateMessage: {
     textAlign: 'center',
