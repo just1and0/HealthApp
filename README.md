@@ -61,3 +61,7 @@ Hit i to open application in iOS simulator.
 - Launch the app on your device.
 - Grant the necessary permissions to access health data.
 - View your health metrics on the intuitive dashboard.
+
+## Possible Improvement
+- Restructure project to accomodate test
+- Write test
