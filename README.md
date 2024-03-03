@@ -8,19 +8,10 @@ The Health App is a React Native project that utilizes HealthKit and Swift to ac
 - **Authorization:** Utilizes HealthKit to request and handle user authorization for accessing health data securely.
 - **Dynamic Updates:** Real-time updates ensure that users receive the latest health information.
 
-## Demo GIF
-
-You can see a quick demo of the Health App in this GIF:
+## Screenshots & Demo
 
 <p align="center">
-  <p align="center">
-  <img src="./assets/Demo.gif" alt="Health App Demo" width="640" />
-</p>
-</p>
-
-## Screenshots
-
-<p align="center">
+  <img src="./assets/Demo.gif" alt="Health App Demo" width="200" />
   <img src="./assets/img1.png" alt="Heart Rate" width="200" />
   <img src="./assets/img2.png" alt="Body Temperature" width="200" />
   <img src="./assets/img3.png" alt="Oxygen Saturation" width="200" />
