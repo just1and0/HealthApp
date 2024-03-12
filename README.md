@@ -1,6 +1,6 @@
 # Health App
 
-The Health App is a React Native project that utilizes HealthKit and Swift to access and display health data from the user's device. It provides a user-friendly interface to track various health metrics such as heart rate, body temperature, oxygen saturation, and blood pressure systolic.
+The Health App is a React Native project that utilizes HealthKit and Swift to access and display health data from the user's device. It provides a user-friendly interface to track various health metrics such as heart rate, body temperature, oxygen saturation, and blood pressure systolic.(>> [Working on Android](https://github.com/just1and0/HealthApp/commit/7e353121699835f2adf9df808286f90c72ae528d) <<)
 
 ## Features
 
