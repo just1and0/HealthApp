@@ -66,3 +66,4 @@ Hit i to open application in iOS simulator.
 ## Possible Improvement
 - Restructure project to accomodate test
 - Write test
+- Add Android support
